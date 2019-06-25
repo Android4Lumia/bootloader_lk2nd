@@ -27,75 +27,79 @@
  *
  */
 
- #include <err.h>
- #include <debug.h>
- #include <reg.h>
- #include <malloc.h>
- #include <string.h>
- #include <msm_panel.h>
- #include <platform/timer.h>
- #include <platform/clock.h>
- #include "mdp5.h"
- #include <platform/iomap.h>
- #include "mdss_efifb.h"
- #include <target/display.h>
- 
- static struct msm_fb_panel_data panel;
- extern int msm_display_init(struct msm_fb_panel_data *pdata);
- 
- static int mdss_uefi_update_panel_info(void)
- {
-     panel.panel_info.xres = UEFI_FB_HORZ;
-     panel.panel_info.yres = UEFI_FB_HORZ;
-     panel.panel_info.bpp  = 32;
-     panel.panel_info.type = UEFI_PANEL;
-     panel.panel_info.clk_rate = 0;
- 
-     panel.panel_info.lcdc.h_back_porch  = 0;
-     panel.panel_info.lcdc.h_front_porch = 0;
-     panel.panel_info.lcdc.h_pulse_width = 0;
-     panel.panel_info.lcdc.v_back_porch  = 0;
-     panel.panel_info.lcdc.v_front_porch = 0;
-     panel.panel_info.lcdc.v_pulse_width = 0;
- 
-     panel.panel_info.lcdc.hsync_skew = 0;
-     panel.panel_info.lcdc.xres_pad   = 0;
-     panel.panel_info.lcdc.yres_pad   = 0;
-     panel.panel_info.lcdc.dual_pipe  = 0;
- 
-     panel.fb.width   = UEFI_FB_HORZ;
-     panel.fb.height  = UEFI_FB_VERT;
-     panel.fb.stride  = UEFI_FB_HORZ;
-     panel.fb.bpp     = 32;
-     panel.fb.format  = FB_FORMAT_BGRA8888;
- 
-     return NO_ERROR;
- }
- 
- static int mdss_uefi_enable_power(uint8_t enable, struct msm_panel_info *pinfo)
- {
-     return NO_ERROR;
- }
- 
- static uint32_t mdss_uefi_panel_clock(uint8_t enable, struct msm_panel_info *pinfo)
- {
-     return NO_ERROR;
- }
- 
- static uint32_t mdss_uefi_pll_clock(uint8_t enable, struct msm_panel_info *pinfo)
- {
-     return NO_ERROR;
- }
- 
- void mdss_uefi_display_init(uint32_t rev)
- {
-     panel.power_func		= mdss_uefi_enable_power;
-     panel.clk_func			= mdss_uefi_panel_clock;
-     panel.update_panel_info = mdss_uefi_update_panel_info;
-     panel.pll_clk_func		= mdss_uefi_pll_clock;
- 
-     panel.fb.base = (void*) UEFI_FB_BASE;
-     panel.mdp_rev = rev;
- 
-     msm_display_init(&panel);
- }
+#include <err.h>
+#include <debug.h>
+#include <reg.h>
+#include <malloc.h>
+#include <string.h>
+#include <msm_panel.h>
+#include <platform/timer.h>
+#include <platform/clock.h>
+#include "mdp5.h"
+#include <platform/iomap.h>
+#include "mdss_efifb.h"
+#include <target/display.h>
+
+static struct msm_fb_panel_data panel;
+extern int msm_display_init(struct msm_fb_panel_data *pdata);
+
+static int mdss_uefi_update_panel_info(void)
+{
+	panel.panel_info.xres = UEFI_FB_HORZ;
+	panel.panel_info.yres = UEFI_FB_HORZ;
+	panel.panel_info.bpp  = 32;
+	panel.panel_info.type = UEFI_PANEL;
+	panel.panel_info.clk_rate = 0;
+
+	panel.panel_info.lcdc.h_back_porch  = 0;
+	panel.panel_info.lcdc.h_front_porch = 0;
+	panel.panel_info.lcdc.h_pulse_width = 0;
+	panel.panel_info.lcdc.v_back_porch  = 0;
+	panel.panel_info.lcdc.v_front_porch = 0;
+	panel.panel_info.lcdc.v_pulse_width = 0;
+
+	panel.panel_info.lcdc.hsync_skew = 0;
+	panel.panel_info.lcdc.xres_pad   = 0;
+	panel.panel_info.lcdc.yres_pad   = 0;
+	panel.panel_info.lcdc.dual_pipe  = 0;
+
+	panel.fb.width   = UEFI_FB_HORZ;
+	panel.fb.height  = UEFI_FB_VERT;
+	panel.fb.stride  = UEFI_FB_HORZ;
+	panel.fb.bpp     = 32;
+	panel.fb.format  = FB_FORMAT_BGRA8888;
+
+	return NO_ERROR;
+}
+
+static int mdss_uefi_enable_power(uint8_t enable, struct msm_panel_info *pinfo)
+{
+	return NO_ERROR;
+}
+
+static uint32_t mdss_uefi_panel_clock(uint8_t enable, struct msm_panel_info *pinfo)
+{
+	return NO_ERROR;
+}
+
+static uint32_t mdss_uefi_pll_clock(uint8_t enable, struct msm_panel_info *pinfo)
+{
+	return NO_ERROR;
+}
+
+void mdss_uefi_display_init(uint32_t rev)
+{
+	writel(UEFI_FB_BASE, MDP_VP_0_RGB_0_BASE + PIPE_SSPP_SRC0_ADDR);
+	writel(1, MDP_CTL_0_BASE + CTL_FLUSH);
+    writel(1, MDP_CTL_1_BASE + CTL_FLUSH); 
+	
+	panel.power_func		= mdss_uefi_enable_power;
+	panel.clk_func			= mdss_uefi_panel_clock;
+	panel.update_panel_info = mdss_uefi_update_panel_info;
+	panel.pll_clk_func		= mdss_uefi_pll_clock;
+
+	panel.fb.base = (void*) UEFI_FB_BASE;
+	panel.mdp_rev = rev;
+
+	msm_display_init(&panel);
+}
