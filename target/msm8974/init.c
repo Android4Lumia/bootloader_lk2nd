@@ -53,8 +53,14 @@
 #include <platform/clock.h>
 #include <platform/gpio.h>
 #include <stdlib.h>
-
+#include <platform/iomap.h>
 #define HW_PLATFORM_8994_INTERPOSER    0x3
+
+#define CTL_LAYER_0                             0x00
+#define CTL_LAYER_1                             0x04
+#define CTL_TOP                                 0x14
+#define CTL_FLUSH                               0x18
+#define CTL_START                               0x1C
 
 extern int platform_is_8974(void);
 extern int platform_is_8974ac(void);
@@ -330,10 +336,18 @@ void target_mmc_caps(struct mmc_host *host)
 }
 #endif
 
-
+#define PIPE_SSPP_SRC0_ADDR                     0x14
+#define MDP_CTL_0_BASE                          REG_MDP(0x600)
+#define MDP_CTL_1_BASE                          REG_MDP(0x700)
 void target_init(void)
 {
 	dprintf(INFO, "target_init()\n");
+
+	dprintf(INFO, "RELOCATING FB");
+	writel(UEFI_FB_BASE, MDP_VP_0_RGB_0_BASE + PIPE_SSPP_SRC0_ADDR);
+	writel(1, MDP_CTL_0_BASE + CTL_FLUSH);
+    writel(1, MDP_CTL_1_BASE + CTL_FLUSH); 
+	dprintf(INFO, "RELOCATING FB DONE");
 
 	spmi_init(PMIC_ARB_CHANNEL_NUM, PMIC_ARB_OWNER_ID);
 
