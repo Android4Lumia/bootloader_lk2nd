@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+#include <skeleton32.dtsi>
+#include <lk2nd.dtsi>
+
+&lk2nd {
+	nokia-martini {
+		model = "Nokia Lumia 930";
+		compatible = "nokia,martini";
+	};
+};
