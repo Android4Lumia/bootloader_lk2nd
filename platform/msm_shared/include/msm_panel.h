@@ -54,6 +54,7 @@
 #define EDP_PANEL		12	/* EDP */
 #define QPIC_PANEL		13	/* QPIC */
 #define SPI_PANEL		14
+#define UEFI_PANEL		15  /* UEFI */
 
 #define DISPLAY_UNKNOWN		0
 #define DISPLAY_1		1
