@@ -48,6 +48,7 @@
 #include "include/panel_generic_720p_cmd.h"
 #include "include/panel_jdi_qhd_dualdsi_video.h"
 #include "include/panel_jdi_qhd_dualdsi_cmd.h"
+#include "include/panel_aurora_1080p_video.h"
 
 #define DISPLAY_MAX_PANEL_DETECTION 3
 
@@ -61,6 +62,7 @@ SHARP_QHD_VIDEO_PANEL,
 GENERIC_720P_CMD_PANEL,
 JDI_QHD_DUALDSI_VIDEO_PANEL,
 JDI_QHD_DUALDSI_CMD_PANEL,
+AURORA_1080P_VIDEO_PANEL,
 UNKNOWN_PANEL
 };
 
@@ -75,6 +77,7 @@ static struct panel_list supp_panels[] = {
 	{"generic_720p_cmd", GENERIC_720P_CMD_PANEL},
 	{"jdi_qhd_dualdsi_video", JDI_QHD_DUALDSI_VIDEO_PANEL},
 	{"jdi_qhd_dualdsi_cmd", JDI_QHD_DUALDSI_CMD_PANEL},
+	{"aurora_1080p_video", JDI_QHD_DUALDSI_CMD_PANEL},
 };
 
 static uint32_t panel_id;
@@ -255,6 +258,30 @@ static int init_panel_data(struct panel_struct *panelstruct,
 		memcpy(phy_db->timing,
 			jdi_qhd_dualdsi_cmd_timings, TIMING_SIZE);
 		break;
+	case AURORA_1080P_VIDEO_PANEL:
+		panelstruct->paneldata    = &aurora_1080p_video_panel_data;
+		panelstruct->panelres     = &aurora_1080p_video_panel_res;
+		panelstruct->color        = &aurora_1080p_video_color;
+		panelstruct->videopanel   = &aurora_1080p_video_video_panel;
+		panelstruct->commandpanel = &aurora_1080p_video_command_panel;
+		panelstruct->state        = &aurora_1080p_video_state;
+		panelstruct->laneconfig   = &aurora_1080p_video_lane_config;
+		panelstruct->paneltiminginfo
+			= &aurora_1080p_video_timing_info;
+		panelstruct->panelresetseq
+					 = &aurora_1080p_video_reset_seq;
+		panelstruct->backlightinfo = &aurora_1080p_video_backlight;
+		pinfo->mipi.panel_on_cmds
+			= aurora_1080p_video_on_command;
+		pinfo->mipi.num_of_panel_on_cmds
+			= AURORA_1080P_VIDEO_ON_COMMAND;
+		pinfo->mipi.panel_off_cmds
+			= aurora_1080p_video_off_command;
+		pinfo->mipi.num_of_panel_off_cmds
+			= AURORA_1080P_VIDEO_OFF_COMMAND;
+		memcpy(phy_db->timing,
+			aurora_1080p_video_timings, TIMING_SIZE);
+		break;
 	case UNKNOWN_PANEL:
 		memset(panelstruct, 0, sizeof(struct panel_struct));
 		memset(pinfo->mipi.panel_on_cmds, 0,
@@ -310,16 +337,16 @@ int oem_panel_select(const char *panel_name, struct panel_struct *panelstruct,
 	case HW_PLATFORM_SURF:
 		switch (auto_pan_loop) {
 		case 0:
-			panel_id = JDI_1080P_VIDEO_PANEL;
+			panel_id = AURORA_1080P_VIDEO_PANEL;
 			break;
 		case 1:
-			panel_id = TOSHIBA_720P_VIDEO_PANEL;
+			panel_id = AURORA_1080P_VIDEO_PANEL;
 			break;
 		case 2:
-			panel_id = GENERIC_720P_CMD_PANEL;
+			panel_id = AURORA_1080P_VIDEO_PANEL;
 			break;
 		default:
-			panel_id = UNKNOWN_PANEL;
+			panel_id = AURORA_1080P_VIDEO_PANEL;
 			break;
 		}
 		auto_pan_loop++;
@@ -330,7 +357,7 @@ int oem_panel_select(const char *panel_name, struct panel_struct *panelstruct,
 	default:
 		dprintf(CRITICAL, "Display not enabled for %d HW type\n"
 					, hw_id);
-		return PANEL_TYPE_UNKNOWN;
+		return AURORA_1080P_VIDEO_PANEL;
 	}
 
 panel_init:
