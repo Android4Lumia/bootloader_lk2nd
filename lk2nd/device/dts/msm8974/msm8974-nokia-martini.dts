@@ -1,11 +1,19 @@
-// SPDX-License-Identifier: GPL-2.0-only
+// SPDX-License-Identifier: BSD-3-Clause
 
-#include <skeleton32.dtsi>
+#include <skeleton64.dtsi>
 #include <lk2nd.dtsi>
 
+/ {
+	qcom,msm-id = <QCOM_ID_MSM8974PRO_AC 118 0x10001>;
+};
+
 &lk2nd {
-	nokia-martini {
-		model = "Nokia Lumia 930";
-		compatible = "nokia,martini";
+	model = "Nokia Lumia 930";
+	compatible = "nokia,martini";
+	lk2nd,match-cmdline = "*Nokia-martini*";
+
+
+	gpio-keys {
+		compatible = "gpio-keys";
 	};
 };
