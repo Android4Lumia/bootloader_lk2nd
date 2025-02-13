@@ -17,7 +17,7 @@ RAMDISK_ADDR     := BASE_ADDR+0x01000000
 SCRATCH_ADDR     := 0x11000000
 
 # We want it to be a littler higher, at least away from the first 128MB
-UEFI_FB_BASE := 0x10400000
+UEFI_FB_BASE := 0x03200000
 UEFI_FB_SIZE := 0x00800000
 UEFI_FB_HORZ := 1080
 UEFI_FB_VERT := 1920
